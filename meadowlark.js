@@ -1,4 +1,5 @@
 var express = require('express');
+var formidable = require('formidable');
 var app = express();
 
 var fortune = require('./lib/fortune.js');
@@ -69,6 +70,25 @@ app.get('/thank-you', function(req, res) {
   res.render('thank-you');
 });
 
+app.get('/contest/vacation-photo', function(req, res) {
+  var now = new Date();
+  res.render('contest/vacation-photo', {
+    year:now.getFullYear(), month:now.getMonth()
+  });
+});
+
+app.post('/contest/vacation-photo/:year/:month', function(req, res) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files) {
+    if(err) return res.redirect(303,'/error');
+    console.log('received fields:');
+    console.log(fields);
+    console.log('received files:');
+    console.log(files);
+    res.redirect(303, '/thank-you')
+  });
+});
+
 app.get('/newsletter', function(req, res) {
   res.render('newsletter', {csrf:'CSRF token goes here'});
 });
@@ -99,12 +119,15 @@ app.get('/tours/hood-river', function(req, res) {
 app.get('/tours/request-group-rate', function(req, res) {
   res.render('tours/request-group-rate');
 });
+
 app.get('/jquery-test', function(req, res){
   res.render('jquery-test');
 });
+
 app.get('/nursery-rhyme', function(req, res){
   res.render('nursery-rhyme');
 });
+
 app.get('/data/nursery-rhyme', function(req, res){
   res.json({
     animal: 'squirrel',
